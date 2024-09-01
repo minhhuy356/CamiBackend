@@ -15,6 +15,7 @@ const START_SERVER = () => {
 
   app.get("/", async (req, res) => {
     console.log(await GET_DB().listCollections().toArray());
+    console.log("Ngốc");
     // Test Absolute import mapOrder
     res.end("<h1>Hello World!</h1><hr>");
   });
