@@ -5,7 +5,9 @@
  */
 
 import express from "express";
-import { CONNECT_DB, GET_DB } from "./config/mongodb";
+import exitHook from "async-exit-hook";
+import { CLOSE_DB, CONNECT_DB, GET_DB } from "./config/mongodb";
+import { env } from "./config/environment";
 
 const START_SERVER = () => {
   const app = express();
@@ -15,14 +17,21 @@ const START_SERVER = () => {
 
   app.get("/", async (req, res) => {
     console.log(await GET_DB().listCollections().toArray());
-    console.log("Ngốc");
+
     // Test Absolute import mapOrder
     res.end("<h1>Hello World!</h1><hr>");
   });
 
   app.listen(port, hostname, () => {
     // eslint-disable-next-line no-console
-    console.log(`Hello Minh Huy, I am running at http://${hostname}:${port}/`);
+    console.log(
+      `Hello ${env.AUTHOR}, I am running at http://${hostname}:${port}/`
+    );
+  });
+
+  exitHook(() => {
+    console.log(`Exiting app`);
+    CLOSE_DB();
   });
 };
 
