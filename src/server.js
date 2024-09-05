@@ -1,31 +1,25 @@
-/**
- * Updated by trungquandev.com's author on August 17 2023
- * YouTube: https://youtube.com/@trungquandev
- * "A bit of fragrance clings to the hand that gives flowers!"
- */
-
 import express from "express";
 import exitHook from "async-exit-hook";
 import { CLOSE_DB, CONNECT_DB, GET_DB } from "./config/mongodb";
 import { env } from "./config/environment";
+import { APIs_V1 } from "./routes/v1/index";
+import { errorHandlingMiddleware } from "./middlewares/errorHandlingMiddleware";
 
 const START_SERVER = () => {
   const app = express();
 
-  const hostname = "localhost";
-  const port = 8017;
+  app.use(express.json());
 
-  app.get("/", async (req, res) => {
-    console.log(await GET_DB().listCollections().toArray());
+  //use APIs V1
+  app.use("/v1", APIs_V1);
 
-    // Test Absolute import mapOrder
-    res.end("<h1>Hello World!</h1><hr>");
-  });
+  //Middleware xử lý lỗi tập trung
+  app.use(errorHandlingMiddleware);
 
-  app.listen(port, hostname, () => {
+  app.listen(env.APP_PORT, env.APP_HOST, () => {
     // eslint-disable-next-line no-console
     console.log(
-      `Hello ${env.AUTHOR}, I am running at http://${hostname}:${port}/`
+      `Hello ${env.AUTHOR}, I am running at http://${env.APP_HOST}:${env.APP_PORT}/`
     );
   });
 
